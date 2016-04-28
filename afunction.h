@@ -109,7 +109,7 @@ void cdFunction(char *buf,char **pathName)  //want to change the pointer of path
 	char *tmp;
 	if (strcmp(buf,"cd\n" ) == 0)
 	{
-		chdir("/home/alex");
+		chdir(userRoot);
 		*pathName = "~";
 	}
 	else 

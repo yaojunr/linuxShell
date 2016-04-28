@@ -13,6 +13,9 @@
 #include <time.h>
 #include "afunction.h"
 
+char userRoot = "/home/alex";
+
+
 int main()
 {
     const char *fifo_name = "/home/alex/my_pipe";   //pipe name should be change by user
