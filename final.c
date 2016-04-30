@@ -13,12 +13,13 @@
 #include <time.h>
 #include "afunction.h"
 
-char userRoot = "/home/alex";
+#define USER_ROOT "/home/alex"
+#define FIFO_NAME "/home/alex/my_pipe"  //pipe name should be change by user
 
 
 int main()
 {
-    const char *fifo_name = "/home/alex/my_pipe";   //pipe name should be change by user
+    
     int pipe_fd = -1;
     int res = 0;
     int open_mode = O_RDONLY;
@@ -26,11 +27,22 @@ int main()
     int redirect = 0;
     char *userName = "alex@root:";
     char *pathName = "~";
+
+    if(access(FIFO_NAME,F_OK)==-1)            
+    {
+        res=mkfifo(FIFO_NAME,0766);
+        if(res!=0)
+        {
+            fprintf(stderr,"Could not creat fifo %s\n",FIFO_NAME);
+            exit(1);
+        }
+    }
+    printf("The pipe name is my_pipe.\n");
     memset(buf, '\0', sizeof(buf));
 
     printf("%s%s$\n", userName,pathName);
 
-    pipe_fd = open(fifo_name, open_mode);
+    pipe_fd = open(FIFO_NAME, open_mode);
     if(pipe_fd != -1)
     {
        
@@ -47,7 +59,7 @@ int main()
                         redirect++;
 
     				if (strcmp(buf,"cd" ) == 32 || strcmp(buf,"cd\n" ) == 0)
-    					cdFunction(buf,&pathName); //32:cd xxx; 0:cd
+    					cdFunction(buf,&pathName,USER_ROOT); //32:cd xxx; 0:cd
     				else if (strstr(buf,"pwd") == buf)
     					pwdFunction(buf,redirect);//pwd                
     				else if (strstr(buf,"ls") == buf)
@@ -66,7 +78,7 @@ int main()
     		else 
     		{
     			close(pipe_fd);
-    			pipe_fd = open(fifo_name, open_mode);
+    			pipe_fd = open(FIFO_NAME, open_mode);
     		}
     		memset(buf, '\0', sizeof(buf));
     	}

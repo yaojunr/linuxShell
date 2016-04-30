@@ -1,6 +1,7 @@
 #ifndef _afunction_h
 #define _afunction_h
 
+
 void forkFunction(char* buf)
 {
 	pid_t child_pid;
@@ -103,7 +104,7 @@ void pwdFunction(char *buf,int redirect)
 
 }
 
-void cdFunction(char *buf,char **pathName)  //want to change the pointer of pathname
+void cdFunction(char *buf,char **pathName,char *userRoot)  //want to change the pointer of pathname
 {
 	char *workDir;
 	char *tmp;
@@ -119,7 +120,7 @@ void cdFunction(char *buf,char **pathName)  //want to change the pointer of path
 		workDir = strtok(tmp,"\n");
 		if (!strcmp(workDir,"~"))   //cd ~
 		{
-			chdir("/home/alex");
+			chdir(userRoot);
 			*pathName = "~";
 			return;
 		}
@@ -139,7 +140,7 @@ void cdFunction(char *buf,char **pathName)  //want to change the pointer of path
 			tmp = path;
 			int i=0;
 
-			if (strlen(dir)>10)
+			if (strlen(dir)>strlen(userRoot))
 				for (i=0;i<strlen(dir)-10;i++)
 					tmp[i+1] = data[i+10];			
 			//strcat can't join the pointer but the string; it needs space	
