@@ -28,11 +28,8 @@ int main()
     char pipeName[80];  //locate the pipe
     memset(pipeName, '\0', sizeof(pipeName));
     getcwd(pipeName,sizeof(pipeName));
-    char *tmp = pipeName;
     char *pn = "/my_pipe";
-    int i;
-    for (i=0;i<strlen(tmp);i++)
-        tmp[strlen(pipeName)] = pn[i];
+    strcat(pipeName,pn);
 
 
     if(access(pipeName,F_OK)==-1)            
@@ -47,11 +44,12 @@ int main()
     printf("The pipe name is my_pipe.\n");
     memset(buf, '\0', sizeof(buf));
 
+    printf("The origin root (as '~') is ");  //output the origin setting
+    pwdFunction("pwd",0);
     printf("%s%s$\n", userName,pathName);
 
     pipe_fd = open(pipeName, open_mode);
-    printf("The origin root (as '~') is ");
-    pwdFunction("pwd",0);
+
     if(pipe_fd != -1)
     {
        
