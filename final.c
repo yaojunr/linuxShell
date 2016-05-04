@@ -13,9 +13,6 @@
 #include <time.h>
 #include "afunction.h"
 
-#define USER_ROOT "/home/alex"
-#define FIFO_NAME "/home/alex/my_pipe"  //pipe name should be change by user
-
 
 int main()
 {
@@ -28,12 +25,22 @@ int main()
     char *userName = "alex@root:";
     char *pathName = "~";
 
-    if(access(FIFO_NAME,F_OK)==-1)            
+    char pipeName[80];  //locate the pipe
+    memset(pipeName, '\0', sizeof(pipeName));
+    getcwd(pipeName,sizeof(pipeName));
+    char *tmp = pipeName;
+    char *pn = "/my_pipe";
+    int i;
+    for (i=0;i<strlen(tmp);i++)
+        tmp[strlen(pipeName)] = pn[i];
+
+
+    if(access(pipeName,F_OK)==-1)            
     {
-        res=mkfifo(FIFO_NAME,0766);
+        res=mkfifo(pipeName,0766);
         if(res!=0)
         {
-            fprintf(stderr,"Could not creat fifo %s\n",FIFO_NAME);
+            fprintf(stderr,"Could not creat fifo %s\n",pipeName);
             exit(1);
         }
     }
@@ -42,7 +49,9 @@ int main()
 
     printf("%s%s$\n", userName,pathName);
 
-    pipe_fd = open(FIFO_NAME, open_mode);
+    pipe_fd = open(pipeName, open_mode);
+    printf("The origin root (as '~') is ");
+    pwdFunction("pwd",0);
     if(pipe_fd != -1)
     {
        
@@ -59,7 +68,7 @@ int main()
                         redirect++;
 
     				if (strcmp(buf,"cd" ) == 32 || strcmp(buf,"cd\n" ) == 0)
-    					cdFunction(buf,&pathName,USER_ROOT); //32:cd xxx; 0:cd
+    					cdFunction(buf,&pathName); //32:cd xxx; 0:cd
     				else if (strstr(buf,"pwd") == buf)
     					pwdFunction(buf,redirect);//pwd                
     				else if (strstr(buf,"ls") == buf)
@@ -78,7 +87,7 @@ int main()
     		else 
     		{
     			close(pipe_fd);
-    			pipe_fd = open(FIFO_NAME, open_mode);
+    			pipe_fd = open(pipeName, open_mode);
     		}
     		memset(buf, '\0', sizeof(buf));
     	}

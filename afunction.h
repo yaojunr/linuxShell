@@ -104,13 +104,17 @@ void pwdFunction(char *buf,int redirect)
 
 }
 
-void cdFunction(char *buf,char **pathName,char *userRoot)  //want to change the pointer of pathname
+void cdFunction(char *buf,char **pathName)  //want to change the pointer of pathname
 {
 	char *workDir;
 	char *tmp;
+	char oriDir[80];
+	memset(oriDir, '\0', sizeof(oriDir));
+	getcwd(oriDir,sizeof(oriDir));	
+
 	if (strcmp(buf,"cd\n" ) == 0)
 	{
-		chdir(userRoot);
+		chdir(oriDir);
 		*pathName = "~";
 	}
 	else 
@@ -120,7 +124,7 @@ void cdFunction(char *buf,char **pathName,char *userRoot)  //want to change the 
 		workDir = strtok(tmp,"\n");
 		if (!strcmp(workDir,"~"))   //cd ~
 		{
-			chdir(userRoot);
+			chdir(oriDir);
 			*pathName = "~";
 			return;
 		}
@@ -132,19 +136,25 @@ void cdFunction(char *buf,char **pathName,char *userRoot)  //want to change the 
 			char dir[80];
 			static char path[80];
 			memset(dir, '\0', sizeof(dir));
-			memset(path, '\0', sizeof(path));
-			strcpy(path,"~/");
+			memset(path, '\0', sizeof(path));		
 			getcwd(dir,sizeof(dir));
 
 			char *data = dir;
 			tmp = path;
 			int i=0;
 
-			if (strlen(dir)>strlen(userRoot))
-				for (i=0;i<strlen(dir)-10;i++)
-					tmp[i+1] = data[i+10];			
-			//strcat can't join the pointer but the string; it needs space	
+			if (strlen(dir)>strlen(oriDir))
+			{	
+				strcpy(path,"~");
+				for (i=0;i<strlen(dir)-strlen(oriDir);i++)
+					tmp[i+1] = data[i+strlen(oriDir)];		//output as ~/xxx	
+				//strcat can't join the pointer but the string; it needs space
+
+			}
+			else
+				strcpy(path,dir); //output as /home/xxx
 			*pathName = path;
+
 		}
 		else
 			printf("No such directory.\n");
