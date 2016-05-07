@@ -104,13 +104,10 @@ void pwdFunction(char *buf,int redirect)
 
 }
 
-void cdFunction(char *buf,char **pathName)  //want to change the pointer of pathname
+void cdFunction(char *buf,char **pathName,char *oriDir)  //want to change the pointer of pathname
 {
 	char *workDir;
-	char *tmp;
-	char oriDir[80];
-	memset(oriDir, '\0', sizeof(oriDir));
-	getcwd(oriDir,sizeof(oriDir));	
+	char *tmp;	
 
 	if (strcmp(buf,"cd\n" ) == 0)
 	{
@@ -131,6 +128,15 @@ void cdFunction(char *buf,char **pathName)  //want to change the pointer of path
 
 		if (strstr(workDir,"./") == workDir)   // cd ./xxx
 			workDir += 2;
+		if (strchr(workDir,'~') == workDir)		// cd ~/xxx
+		{
+			workDir++;
+			char tmpChar[80];
+			strcpy(tmpChar,oriDir);
+			strcat(tmpChar,workDir);
+			workDir = tmpChar;
+		}
+
 		if (!chdir(workDir))              // cd xxx
 		{	
 			char dir[80];
@@ -258,6 +264,7 @@ void lsFunction(char *buf,int redirect)  //*buf is a pointer to the string buf
 			
 			if (strstr(filepath[i],"./") == filepath[i])   // ls ./xxx
 				filepath[i] += 2;
+			
 			i++;
 
 		}

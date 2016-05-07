@@ -25,9 +25,10 @@ int main()
     char *userName = "alex@root:";
     char *pathName = "~";
 
-    char pipeName[80];  //locate the pipe
+    char pipeName[80],oriDir[80];  //locate the pipe
     memset(pipeName, '\0', sizeof(pipeName));
     getcwd(pipeName,sizeof(pipeName));
+    strcpy(oriDir,pipeName);
     char *pn = "/my_pipe";
     strcat(pipeName,pn);
 
@@ -66,7 +67,7 @@ int main()
                         redirect++;
 
     				if (strcmp(buf,"cd" ) == 32 || strcmp(buf,"cd\n" ) == 0)
-    					cdFunction(buf,&pathName); //32:cd xxx; 0:cd
+    					cdFunction(buf,&pathName,oriDir); //32:cd xxx; 0:cd
     				else if (strstr(buf,"pwd") == buf)
     					pwdFunction(buf,redirect);//pwd                
     				else if (strstr(buf,"ls") == buf)
