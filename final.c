@@ -59,7 +59,7 @@ int main()
     		
     		if (res = read(pipe_fd, buf,128))
     		{
-    			if (strcmp(buf,"exit()\n")!=0)
+    			if (strcmp(buf,"exit\n")!=0)
     			{
     				//printf("%s", buf);
     				//printf("%d", strcmp(buf,"cd"));32
@@ -74,6 +74,8 @@ int main()
     					lsFunction(buf,redirect);//ls
                     else if (strstr(buf,"mkdir") == buf)
                         mkdirFunction(buf); //mkdir
+                    else if (strstr(buf,"cat") == buf)
+                        catFunction(buf); //cat
     				else if (strchr(buf,' ') || strchr(buf,'/'))   //only the command with ' ' or '/' can do fork 
     					forkFunction(buf);                         //e.g: gedit xxx ; ./a.out 
                     else

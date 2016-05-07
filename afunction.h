@@ -97,6 +97,7 @@ void pwdFunction(char *buf,int redirect)
 			}	
 		fp = fopen(filepath,"w");
 		fprintf(fp, "%s\n", dir);
+		fclose(fp);
 
 	}
 	else
@@ -277,9 +278,9 @@ void lsFunction(char *buf,int redirect)  //*buf is a pointer to the string buf
 	if (!redirect)
 	for (j=0;j<pathNum;j++)
 	{
-		chdir(dir);        //relocate to the original path
+		
 		if (filepath[j])
-		if (!chdir(filepath[j])) 	printf("%s:\n", filepath[j]);		// change directory if necessary
+		if (!chdir(filepath[j])) 	{if (pathNum>1) printf("%s:\n", filepath[j]);}		// change directory if necessary
 		else 
 		{
 			printf("ls: cannot access %s: No such directory.\n",filepath[j]);
@@ -309,7 +310,7 @@ void lsFunction(char *buf,int redirect)  //*buf is a pointer to the string buf
 				memset(modeStr, '\0', sizeof(modeStr));
 				judgeMode(info.st_mode,modeStr);
 				printf("%s  ", modeStr);
-				printf("%d ", (int)info.st_nlink);
+				printf("%2d ", (int)info.st_nlink);
 				printf("%s ", getUid(info.st_uid));
 				printf("%s ", getGid(info.st_gid));
 				printf("%6ld ", (long)info.st_size);
@@ -325,14 +326,15 @@ void lsFunction(char *buf,int redirect)  //*buf is a pointer to the string buf
 		}
 		if (!detail && num%col != 0)
 			printf("\n");
+		chdir(dir);        //relocate to the original path
 	}
 
 	else             //output redirectory
 	for (j=0;j<pathNum;j++)
 	{
-		chdir(dir);        //relocate to the original path
+		
 		if (filepath[j])
-		if (!chdir(filepath[j])) 	fprintf(fp,"%s:\n", filepath[j]);		// change directory if necessary
+		if (!chdir(filepath[j])) 	{if (pathNum>1) fprintf(fp,"%s:\n", filepath[j]);}		// change directory if necessary
 		else 
 		{
 			fprintf(fp,"ls: cannot access %s: No such directory.\n",filepath[j]);
@@ -378,7 +380,9 @@ void lsFunction(char *buf,int redirect)  //*buf is a pointer to the string buf
 		}
 		if (!detail && num%col != 0)
 			fprintf(fp,"\n");
+		chdir(dir);        //relocate to the original path
 	}
+	fclose(fp);
 }
 
 void mkdirFunction(char *buf)
@@ -460,12 +464,28 @@ void mkdirFunction(char *buf)
 		} while(tmp = strtok(NULL,"/"));
 		chdir(dir);
 	}
-
-
-
-
 }
 
+void catFunction(char *buf)
+{
+	FILE *fp;
+	char *tmp,*filename;
+	char ch,lch;
+	strtok(buf," ");
+	tmp = strtok(NULL," ");
+	filename = strtok(tmp,"\n");
+	if (!(fp = fopen(filename,"r")))
+		printf("Such file doesn't exist\n");
+
+	while ((ch=fgetc(fp))!=EOF)
+    {
+        printf("%c", ch);
+        lch = ch;
+    }
+    fclose(fp);
+    if (lch != 10)
+    	printf("\n");
+}
 
 
 #endif
