@@ -301,7 +301,7 @@ void lsFunction(char *buf,int redirect)  //*buf is a pointer to the string buf
 			num++;
 			if (inode)
 			{
-				printf("%d ", (int)info.st_ino);
+				printf("%8d ", (int)info.st_ino);
 				col = 3;
 			}
 			if (detail)
@@ -330,7 +330,7 @@ void lsFunction(char *buf,int redirect)  //*buf is a pointer to the string buf
 	}
 
 	else             //output redirectory
-	for (j=0;j<pathNum;j++)
+	{for (j=0;j<pathNum;j++)
 	{
 		
 		if (filepath[j])
@@ -383,6 +383,8 @@ void lsFunction(char *buf,int redirect)  //*buf is a pointer to the string buf
 		chdir(dir);        //relocate to the original path
 	}
 	fclose(fp);
+	}
+	
 }
 
 void mkdirFunction(char *buf)

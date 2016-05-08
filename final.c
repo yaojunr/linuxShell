@@ -31,7 +31,7 @@ int main()
     strcpy(oriDir,pipeName);
     char *pn = "/my_pipe";
     strcat(pipeName,pn);
-
+    setbuf(stdout,NULL);
 
     if(access(pipeName,F_OK)==-1)            
     {
@@ -47,7 +47,7 @@ int main()
 
     printf("The origin root (as '~') is ");  //output the origin setting
     pwdFunction("pwd",0);
-    printf("%s%s$\n", userName,pathName);
+    printf("%s%s$ ", userName,pathName);
 
     pipe_fd = open(pipeName, open_mode);
 
@@ -59,7 +59,8 @@ int main()
     		
     		if (res = read(pipe_fd, buf,128))
     		{
-    			if (strcmp(buf,"exit\n")!=0)
+    			printf("%s", buf);
+                if (strcmp(buf,"exit\n")!=0)
     			{
     				//printf("%s", buf);
     				//printf("%d", strcmp(buf,"cd"));32
