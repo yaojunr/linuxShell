@@ -82,7 +82,7 @@ int main()
                     else
                         printf("No such command.\n");
 
-    				printf("%s%s$\n", userName,pathName);
+    				printf("%s%s$ ", userName,pathName);
 				}
     			else break;	
     		}		
